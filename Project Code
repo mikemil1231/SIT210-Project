@@ -1,0 +1,36 @@
+int i = 0;
+int led = 5; //set pin for led
+unsigned long time = 0;
+bool flag = HIGH; // set direction for motor to spin
+#define sensorPin A1 //set pin for vibration sensor
+#define ledPin 13 
+
+void setup() {
+  Serial.begin(115200); //serial monitor for testing
+  pinMode(10, OUTPUT); //direction control PIN 10 with direction wire 
+  pinMode(11, OUTPUT);
+  digitalWrite(10, flag); //direction pin and direction required
+}
+
+void loop() {
+
+  int x=analogRead(sensorPin); //set vibration to x
+  Serial.println(x); //print vibrations
+  if(x>500)digitalWrite(13,HIGH);
+  else digitalWrite(13,LOW);
+  delay(50);
+  if(x>100)digitalWrite(led, HIGH); //if vibration value is over 100, turn led on
+  else digitalWrite(led, LOW);
+  delay(50);
+  if (Serial.available())  {
+    analogWrite(1, Serial.parseInt());  //motor speed. 1 is fastest 255 is slowest
+    delay(200);
+  }
+  for(int j = 0;j<8;j++)  {
+    i += pulseIn(9, HIGH, 500000); //SIGNAL OUTPUT PIN 9 with  white line,cycle = 2*i,1s = 1000000us，Signal cycle pulse number：27*2
+  }
+  i = i >> 3;
+  Serial.print(111111 / i); //speed   r/min  (60*1000000/(45*6*2*i))
+  Serial.println("  r/min");
+  i = 0;
+}
